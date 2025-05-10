@@ -20,7 +20,7 @@ A lightweight battery monitoring tool built in Rust that tracks battery informat
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/powerpulse.git
+git clone https://github.com/kuroonai/powerpulse.git
 cd powerpulse
 
 # Build the project
