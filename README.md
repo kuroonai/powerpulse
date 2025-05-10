@@ -1,7 +1,7 @@
 # PowerPulse
 
 <div align="center">
-  <img src="https://via.placeholder.com/150/0000FF/FFFFFF?text=PowerPulse" alt="PowerPulse Logo" width="150" height="150">
+  <img src="https://github.com/kuroonai/powerpulse/blob/main/resources/powerpulse.png" alt="PowerPulse Logo" width="150" height="150">
   
   ![GitHub license](https://img.shields.io/github/license/kuroonai/powerpulse)
   ![GitHub stars](https://img.shields.io/github/stars/kuroonai/powerpulse)
