@@ -1,13 +1,14 @@
+toml
 [package]
 name = "powerpulse"
 version = "0.1.0"
 edition = "2021"
+authors = ["Naveen Vasudevan <naveenovan@gmail.com>"]
+description = "A lightweight battery monitoring tool"
+license = "MIT"
+repository = "https://github.com/kuroonai/powerpulse"
+readme = "README.md"
+keywords = ["battery", "monitoring", "system", "utility"]
+categories = ["command-line-utilities", "system"]
 
-[dependencies]
-battery = "0.7.8"       # For battery monitoring
-chrono = "0.4"          # For timestamps
-serde = { version = "1.0", features = ["derive"] } # For serialization
-serde_json = "1.0"      # For JSON handling
-rusqlite = { version = "0.29.0", features = ["bundled"] } # SQLite for data storage
-clap = { version = "4.4", features = ["derive"] } # For CLI args
-notify-rust = "4.9"     # For desktop notifications
+# [existing dependencies remain the same]
