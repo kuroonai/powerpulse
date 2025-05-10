@@ -1,10 +1,10 @@
 // Static member initialization
-ID3D11Device* BatteryGuardianGUI::g_pd3dDevice = NULL;
-ID3D11DeviceContext* BatteryGuardianGUI::g_pd3dDeviceContext = NULL;
-IDXGISwapChain* BatteryGuardianGUI::g_pSwapChain = NULL;
-ID3D11RenderTargetView* BatteryGuardianGUI::g_mainRenderTargetView = NULL;
+ID3D11Device* PowerPulseGUI::g_pd3dDevice = NULL;
+ID3D11DeviceContext* PowerPulseGUI::g_pd3dDeviceContext = NULL;
+IDXGISwapChain* PowerPulseGUI::g_pSwapChain = NULL;
+ID3D11RenderTargetView* PowerPulseGUI::g_mainRenderTargetView = NULL;
 
-bool BatteryGuardianGUI::CreateDeviceD3D(HWND hWnd) {
+bool PowerPulseGUI::CreateDeviceD3D(HWND hWnd) {
     // Setup swap chain
     DXGI_SWAP_CHAIN_DESC sd;
     ZeroMemory(&sd, sizeof(sd));
@@ -32,28 +32,28 @@ bool BatteryGuardianGUI::CreateDeviceD3D(HWND hWnd) {
     return true;
 }
 
-void BatteryGuardianGUI::CleanupDeviceD3D() {
+void PowerPulseGUI::CleanupDeviceD3D() {
     CleanupRenderTarget();
     if (g_pSwapChain) { g_pSwapChain->Release(); g_pSwapChain = NULL; }
     if (g_pd3dDeviceContext) { g_pd3dDeviceContext->Release(); g_pd3dDeviceContext = NULL; }
     if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = NULL; }
 }
 
-void BatteryGuardianGUI::CreateRenderTarget() {
+void PowerPulseGUI::CreateRenderTarget() {
     ID3D11Texture2D* pBackBuffer;
     g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
     g_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &g_mainRenderTargetView);
     pBackBuffer->Release();
 }
 
-void BatteryGuardianGUI::CleanupRenderTarget() {
+void PowerPulseGUI::CleanupRenderTarget() {
     if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = NULL; }
 }
 
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-LRESULT WINAPI BatteryGuardianGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT WINAPI PowerPulseGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
         return true;
 
@@ -82,7 +82,7 @@ LRESULT WINAPI BatteryGuardianGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, L
             if (lParam == WM_RBUTTONUP) {
                 // Show context menu
                 HMENU hMenu = CreatePopupMenu();
-                AppendMenuA(hMenu, MF_STRING, 1, "Open BatteryGuardian");
+                AppendMenuA(hMenu, MF_STRING, 1, "Open PowerPulse");
                 AppendMenuA(hMenu, MF_SEPARATOR, 0, NULL);
                 AppendMenuA(hMenu, MF_STRING, 2, "Exit");
                 
@@ -123,11 +123,11 @@ int main(int argc, char** argv) {
     
     if (cliMode) {
         // Run in CLI mode
-        BatteryGuardianCLI cli(monitor);
+        PowerPulseCLI cli(monitor);
         cli.Run();
     } else {
         // Run in GUI mode
-        BatteryGuardianGUI gui(monitor);
+        PowerPulseGUI gui(monitor);
         if (gui.Initialize()) {
             gui.Run();
             gui.Shutdown();
@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
 
         CleanupDeviceD3D();
         DestroyWindow(hwnd);
-        UnregisterClass(_T("BatteryGuardian"), GetModuleHandle(NULL));
+        UnregisterClass(_T("PowerPulse"), GetModuleHandle(NULL));
     }
 
 private:
@@ -189,11 +189,11 @@ private:
         window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-        ImGui::Begin("BatteryGuardian", NULL, window_flags);
+        ImGui::Begin("PowerPulse", NULL, window_flags);
         ImGui::PopStyleVar(3);
 
         // Create a docking space
-        ImGuiID dockspace_id = ImGui::GetID("BatteryGuardianDockSpace");
+        ImGuiID dockspace_id = ImGui::GetID("PowerPulseDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
         // Menu bar
@@ -477,14 +477,14 @@ private:
             if (startWithWindows) {
                 char path[MAX_PATH];
                 GetModuleFileNameA(NULL, path, MAX_PATH);
-                RegSetValueExA(hKey, "BatteryGuardian", 0, REG_SZ, (BYTE*)path, strlen(path) + 1);
+                RegSetValueExA(hKey, "PowerPulse", 0, REG_SZ, (BYTE*)path, strlen(path) + 1);
             } else {
-                RegDeleteValueA(hKey, "BatteryGuardian");
+                RegDeleteValueA(hKey, "PowerPulse");
             }
             RegCloseKey(hKey);
         }
     }
-};// BatteryGuardian - Cross-platform Battery Monitoring Application
+};// PowerPulse - Cross-platform Battery Monitoring Application
 // A lightweight battery monitoring tool for Windows with CLI and GUI features
 
 #include <iostream>
@@ -663,7 +663,7 @@ private:
         NOTIFYICONDATAA nid = { sizeof(nid) };
         nid.uFlags = NIF_INFO;
         strcpy_s(nid.szInfo, message.c_str());
-        strcpy_s(nid.szInfoTitle, "BatteryGuardian");
+        strcpy_s(nid.szInfoTitle, "PowerPulse");
         nid.dwInfoFlags = NIIF_INFO;
         Shell_NotifyIconA(NIM_MODIFY, &nid);
 #else
@@ -799,7 +799,7 @@ private:
     sqlite3* db;
 
     void InitializeDatabase() {
-        int rc = sqlite3_open("batteryguardian.db", &db);
+        int rc = sqlite3_open("PowerPulse.db", &db);
         if (rc) {
             std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
             sqlite3_close(db);
@@ -1050,15 +1050,15 @@ private:
 };
 
 // Forward declare the GUI class to allow CLI mode
-class BatteryGuardianGUI;
+class PowerPulseGUI;
 
 // CLI implementation
-class BatteryGuardianCLI {
+class PowerPulseCLI {
 public:
-    BatteryGuardianCLI(std::shared_ptr<BatteryMonitor> monitor) : monitor(monitor) {}
+    PowerPulseCLI(std::shared_ptr<BatteryMonitor> monitor) : monitor(monitor) {}
 
     void Run() {
-        std::cout << "BatteryGuardian CLI v" << APP_VERSION << std::endl;
+        std::cout << "PowerPulse CLI v" << APP_VERSION << std::endl;
         std::cout << "Type 'help' for a list of commands." << std::endl;
 
         std::string command;
@@ -1209,15 +1209,15 @@ private:
 };
 
 // Main GUI implementation (using Dear ImGui)
-class BatteryGuardianGUI {
+class PowerPulseGUI {
 public:
-    BatteryGuardianGUI(std::shared_ptr<BatteryMonitor> monitor) : monitor(monitor), running(false) {}
+    PowerPulseGUI(std::shared_ptr<BatteryMonitor> monitor) : monitor(monitor), running(false) {}
 
     bool Initialize() {
         // Create application window
-        WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("BatteryGuardian"), NULL };
+        WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("PowerPulse"), NULL };
         RegisterClassEx(&wc);
-        hwnd = CreateWindow(wc.lpszClassName, _T("BatteryGuardian"), WS_OVERLAPPEDWINDOW, 100, 100, 1024, 768, NULL, NULL, wc.hInstance, NULL);
+        hwnd = CreateWindow(wc.lpszClassName, _T("PowerPulse"), WS_OVERLAPPEDWINDOW, 100, 100, 1024, 768, NULL, NULL, wc.hInstance, NULL);
 
         // Initialize Direct3D
         if (!CreateDeviceD3D(hwnd)) {
@@ -1249,7 +1249,7 @@ public:
         nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
         nid.uCallbackMessage = WM_USER + 1;
         nid.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-        strcpy_s(nid.szTip, "BatteryGuardian");
+        strcpy_s(nid.szTip, "PowerPulse");
         Shell_NotifyIconA(NIM_ADD, &nid);
 
         return true;
