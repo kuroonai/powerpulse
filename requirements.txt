@@ -1,4 +1,7 @@
 psutil>=5.9.0
 matplotlib>=3.5.0
 numpy>=1.20.0
-#win10toast
+pystray>=0.19
+win10toast>=0.9
+pywin32>302
+winshell

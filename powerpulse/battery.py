@@ -166,3 +166,8 @@ def get_battery_info_macos():
             'temperature': temp,
             'remaining_time': time_remaining
         }
+    except Exception as e:
+        print(f"Error getting battery info: {e}")
+        
+    return None
+
