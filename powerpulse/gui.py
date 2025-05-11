@@ -82,28 +82,24 @@ class PowerPulseGUI:
     def set_app_icon(self):
         """Set the application icon"""
         try:
-            # Look for the icon in several possible locations
-            icon_paths = [
-                os.path.join(os.path.dirname(__file__), "resources", "powerpulse.ico"),
-                os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "powerpulse.ico"),
-            ]
+            from powerpulse.utils import get_resource_path
             
-            for icon_path in icon_paths:
+            if sys.platform == 'win32':
+                icon_path = get_resource_path('powerpulse.ico')
                 if os.path.exists(icon_path):
-                    if sys.platform == 'win32':
-                        self.root.iconbitmap(icon_path)
-                    elif sys.platform in ('linux', 'darwin'):
-                        # For Linux and macOS, use a different approach
-                        img = tk.PhotoImage(file=icon_path.replace('.ico', '.png'))
-                        self.root.tk.call('wm', 'iconphoto', self.root._w, img)
-                    break
+                    self.root.iconbitmap(icon_path)
+            else:  # Linux/macOS
+                icon_path = get_resource_path('powerpulse.png')
+                if os.path.exists(icon_path):
+                    img = tk.PhotoImage(file=icon_path)
+                    self.root.tk.call('wm', 'iconphoto', self.root._w, img)
         except Exception as e:
             print(f"Could not set application icon: {e}")
-    
+        
     def setup_tray_icon(self):
         """Set up system tray icon if available"""
         self.tray_icon = None
-        
+                
         # Windows-specific tray icon
         if sys.platform == 'win32':
             try:
